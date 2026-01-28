@@ -65,12 +65,12 @@ function centerText(text, length) {
 // logo
 const titles = [
         [
-                "██████╗  ██████╗  █████╗ ████████╗    ██╗   ██╗██████╗",
-                "██╔════╝ ██╔═══██╗██╔══██╗╚══██╔══╝    ██║   ██║╚════██╗",
-                "██║  ███╗██║   ██║███████║   ██║       ██║   ██║ █████╔╝",
-                "██║   ██║██║   ██║██╔══██║   ██║       ╚██╗ ██╔╝██╔═══╝",
-                "╚██████╔╝╚██████╔╝██║  ██║   ██║        ╚████╔╝ ███████╗",
-                "╚═════╝  ╚═════╝ ╚═╝  ╚═╝   ╚═╝         ╚═══╝  ╚══════╝"
+                "░█████╗░██╗░░░░░██╗░░░██╗██╗",
+                "██╔══██╗██║░░░░░██║░░░██║██║",
+                "███████║██║░░░░░╚██╗░██╔╝██║",
+                "██╔══██║██║░░░░░░╚████╔╝░██║",
+                "██║░░██║███████╗░░╚██╔╝░░██║",
+                "╚═╝░░╚═╝╚══════╝░░░╚═╝░░░╚═╝"
         ],
         [
                 "█▀▀ █▀█ ▄▀█ ▀█▀  █▄▄ █▀█ ▀█▀  █░█ ▀█",
@@ -80,7 +80,7 @@ const titles = [
                 "G O A T B O T  V 2 @" + currentVersion
         ],
         [
-                "GOATBOT V2"
+                "GOAT BOT V2 BY SAJEEB AHAMED"
         ]
 ];
 const maxWidth = process.stdout.columns;
@@ -113,7 +113,7 @@ else {
         subTitleArray.push(subTitle);
 }
 const author = ("Created by NTKhang with ♡");
-const modified = ("Modified by NeoKEX");
+const modified = ("Modified by Sajeeb Ahamed");
 const srcUrl = ("Source code: https://github.com/ntkhang03/Goat-Bot-V2");
 const fakeRelease = ("ALL VERSIONS NOT RELEASED HERE ARE FAKE");
 for (const t of subTitleArray) {

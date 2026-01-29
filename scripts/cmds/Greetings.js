@@ -42,7 +42,7 @@ exports.onChat = async function({\u0065\u0076\u0065\u006E\u0074:\u007A,\u0061\u0
   \u0073\u0065\u006E\u0074 = true;
  }
  else if(\u0066\u006F\u0072\u006B){
-  \u0079.sendMessage("\uD83D\uDD17 \u0986\u09ae\u09be\u09b0 𝐆𝐢𝐭𝐇𝐮𝐛 𝐑𝐞𝐩𝐨 𝐇𝐞𝐫𝐞:\nhttps://github.com/alvi-boss/GOAT-BOT-ALVI.git", \u0074, \u007A.messageID);
+  \u0079.sendMessage("\uD83D\uDD17 \u0986\u09ae\u09be\u09b0 𝐆𝐢𝐭𝐇𝐮𝐛 𝐑𝐞𝐩𝐨:\nhttps://github.com/sajeeb-ahamed/GOAT-BOT-V2.git", \u0074, \u007A.messageID);
   \u0073\u0065\u006E\u0074 = true;
  }
 

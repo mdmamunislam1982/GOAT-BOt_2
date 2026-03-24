@@ -1,11 +1,11 @@
 const { getTime, drive } = global.utils;
-const { nickNameBot } = global.GoatBot.config; 
+const { nickNameBot } = global.GoatBot.config;
 
 module.exports = {
   config: {
     name: "welcome",
-    version: "2.3",
-    author: "ALVI-BOSS",
+    version: "3.5",
+    author: "Mamun-Boss",
     category: "events"
   },
 
@@ -15,49 +15,68 @@ module.exports = {
       session2: "noon",
       session3: "afternoon",
       session4: "evening",
+
       defaultWelcomeMessage:
-        "__𝐀𝐬𝐬𝐚𝐥𝐚𝐦𝐮 𝐀𝐥𝐚𝐢𝐤𝐮𝐦__\n═══════════════\n__𝑾𝑬𝑳𝑪𝑶𝑴𝑬 ➤ {userName}__\n\n_ᴏɴ ᴏᴜʀ {threadName}_\n_ᴡᴇ ᴀʀᴇ ᴘʟᴇᴀsᴇᴅ ᴛᴏ ᴡᴇʟᴄᴏᴍᴇ ʏᴏᴜ_\n       __!! ᴡᴇʟᴄᴏᴍᴇ !!__\n__'ʏᴏᴜ ᴀʀᴇ ᴛʜᴇ__\n        __{memberCount}ᴛʜ ᴍᴇᴍʙᴇʀ ᴏꜰ ᴛʜɪs ɢʀᴏᴜᴘ___!!\n\n___𝙰ᴅᴅᴇᴅ ʙʏ : {inviterName}___\n\n𝙱ᴏᴛ ᴏᴡɴᴇʀ : 𝙰𝚕𝚟𝚒-𝙱𝚘𝚜𝚜",
-      botAddedMessage:
-        "━━━━━━━━━━━━━━━━━━━\n🤖 ᴛʜᴀɴᴋ ʏᴏᴜ ғᴏʀ ᴀᴅᴅɪɴɢ ᴍᴇ ᴛᴏ ᴛʜᴇ ɢʀᴏᴜᴘ! 💖\n\n⚙️ ʙᴏᴛ ᴘʀᴇꜰɪx : /\n📜 ᴛʏᴘᴇ /help ᴛᴏ sᴇᴇ ᴀʟʟ ᴄᴏᴍᴍᴀɴᴅs\n\n✨ ʟᴇᴛ's ᴍᴀᴋᴇ ᴛʜɪs ɢʀᴏᴜᴘ ᴇᴠᴇɴ ᴍᴏʀᴇ ꜰᴜɴ ᴛᴏɢᴇᴛʜᴇʀ! 😄\n━━━━━━━━━━━━━━━━━━━"
+`‎┄┅═══❁🌺❁═══┅┄•╮
+‎     আ্ঁস্ঁসা্ঁলা্ঁমু্ঁ💚আ্ঁলা্ঁই্ঁকু্ঁম্ঁ
+‎╰•┄┅═══❁🌺❁═══┅┄•╯
+হাসি, মজা, ঠাট্টায় গড়ে উঠুক  
+চিরস্থায়ী বন্ধুত্বের বন্ধন 🥰  
+ভালোবাসা ও সম্পর্ক থাকুক আজীবন 💝  
+
+➤ আশা করি আপনি এখানে হাসি-মজা করে আড্ডা দিতে ভালোবাসবেন 😍  
+➤ সবার সাথে মিলেমিশে থাকবেন 😉  
+➤ উস্কানিমূলক কথা বা খারাপ ব্যবহার করবেন না 🚫  
+➤ গ্রুপ এডমিনের কথা শুনবেন ও রুলস মেনে চলবেন ✅  
+
+›› প্রিয় {userName},  
+আপনি এই গ্রুপের {memberCount} নম্বর মেম্বার!  
+›› গ্রুপ: {threadName}  
+
+💌 🌺 𝐖 𝐄 𝐋 𝐂 𝐎 𝐌 𝐄 🌺 💌  
+🤖 𝙱𝚘𝚝 𝙾𝚠𝚗𝚎𝚛 : 𝙼𝚊𝚖𝚞𝚗-𝙱𝚘𝚜𝚜`
     }
   },
 
-  onStart: async ({ threadsData, message, event, api, usersData, getLang }) => {
+  onStart: async function ({ threadsData, message, event, api, usersData, getLang }) {
     if (event.logMessageType !== "log:subscribe") return;
 
     const { threadID } = event;
     const threadData = await threadsData.get(threadID);
-    if (!threadData.settings.sendWelcomeMessage) return;
+
+    if (!threadData.settings?.sendWelcomeMessage) return;
 
     const addedMembers = event.logMessageData.addedParticipants;
-    const hours = getTime("HH");
     const threadName = threadData.threadName;
-    const prefix = global.utils.getPrefix(threadID);
+    const hours = parseInt(getTime("HH"));
 
     for (const user of addedMembers) {
       const userID = user.userFbId;
       const botID = api.getCurrentUserID();
 
-      
+      // 🤖 If bot added
       if (userID == botID) {
         if (nickNameBot)
           await api.changeNickname(nickNameBot, threadID, botID);
-        return message.send(getLang("botAddedMessage", prefix));
+
+        return message.send("🤖 ধন্যবাদ আমাকে গ্রুপে যুক্ত করার জন্য!");
       }
 
-      
       const userName = user.fullName;
-      const inviterName = await usersData.getName(event.author);
       const memberCount = event.participantIDs.length;
+      const inviterName = await usersData.getName(event.author);
 
-      let { welcomeMessage = getLang("defaultWelcomeMessage") } = threadData.data;
+      let welcomeMessage =
+        threadData.data?.welcomeMessage ||
+        getLang("defaultWelcomeMessage");
 
+      // ⏰ Session detect
       const session =
-        hours <= 10
+        hours < 11
           ? getLang("session1")
-          : hours <= 12
+          : hours < 14
           ? getLang("session2")
-          : hours <= 18
+          : hours < 18
           ? getLang("session3")
           : getLang("session4");
 
@@ -74,19 +93,20 @@ module.exports = {
         mentions: [{ tag: userName, id: userID }]
       };
 
-      
-      if (threadData.data.welcomeAttachment) {
+      // 📎 Attachment Support
+      if (threadData.data?.welcomeAttachment) {
         const files = threadData.data.welcomeAttachment;
-        const attachments = files.reduce((acc, file) => {
-          acc.push(drive.getFile(file, "stream"));
-          return acc;
-        }, []);
-        form.attachment = (await Promise.allSettled(attachments))
-          .filter(({ status }) => status == "fulfilled")
-          .map(({ value }) => value);
+
+        const attachments = await Promise.allSettled(
+          files.map(file => drive.getFile(file, "stream"))
+        );
+
+        form.attachment = attachments
+          .filter(res => res.status === "fulfilled")
+          .map(res => res.value);
       }
 
-      message.send(form);
+      await message.send(form);
     }
   }
 };

@@ -3,7 +3,7 @@ const axios = require("axios");
 module.exports = {
   config: {
     name: "toilet",
-    version: "2.1",
+    version: "4.0",
     author: "Mamun OP",
     countDown: 5,
     role: 0,
@@ -11,7 +11,7 @@ module.exports = {
     category: "fun"
   },
 
-  onStart: async function ({ message, event, args, usersData }) {
+  onStart: async function ({ message, event, args }) {
     try {
       let target;
       const mention = Object.keys(event.mentions);
@@ -21,21 +21,21 @@ module.exports = {
       else if (args[0]) target = args[0];
       else return message.reply("❌ কাউকে mention/reply দে!");
 
-      // 👉 Avatar
-      const avatar = await usersData.getAvatarUrl(target);
+      // ✅ Facebook avatar (MOST STABLE)
+      let avatar = `https://graph.facebook.com/${target}/picture?width=512&height=512`;
 
       let imgUrl;
 
-      // ✅ Main API (Popcat)
+      // ✅ API 1 (Popcat)
       try {
-        imgUrl = `https://simsimi-api-tjb1.onrender.com=${encodeURIComponent(avatar)}`;
-        await axios.get(imgUrl); // test request
+        imgUrl = `https://api.popcat.xyz/toilet?image=${encodeURIComponent(avatar)}`;
+        await axios.get(imgUrl); // test
       } catch {
-        // ❗ Fallback API (Simsimi)
-        imgUrl = `https://simsimi-api-tjb1.onrender.com/toilet?image=${encodeURIComponent(avatar)}`;
+        // ✅ API 2 (fallback)
+        imgUrl = `https://some-random-api.ml/canvas/toilet?avatar=${encodeURIComponent(avatar)}`;
       }
 
-      // 👉 Stream
+      // ✅ Final Image Stream
       const res = await axios.get(imgUrl, {
         responseType: "stream"
       });
@@ -46,8 +46,8 @@ module.exports = {
       });
 
     } catch (err) {
-      console.error(err);
-      message.reply("❌ Error hoise bro! API problem 😢");
+      console.error("FULL ERROR 👉", err);
+      message.reply("❌ Error hoise bro! Net/API problem 😢");
     }
   }
 };

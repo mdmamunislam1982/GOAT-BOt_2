@@ -28,7 +28,7 @@ module.exports = {
 
       // ✅ Main API (Popcat)
       try {
-        imgUrl = `https://api.popcat.xyz/toilet?image=${encodeURIComponent(avatar)}`;
+        imgUrl = `https://simsimi-api-tjb1.onrender.com=${encodeURIComponent(avatar)}`;
         await axios.get(imgUrl); // test request
       } catch {
         // ❗ Fallback API (Simsimi)

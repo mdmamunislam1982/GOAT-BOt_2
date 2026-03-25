@@ -3,15 +3,12 @@ const axios = require("axios");
 module.exports = {
   config: {
     name: "toilet",
-    aliases: ["toiletimg"],
-    version: "2.00",
+    version: "2.1",
     author: "Mamun OP",
     countDown: 5,
     role: 0,
-    shortDescription: "Put someone in toilet 🚽",
-    longDescription: "Mention / Reply / UID দিয়েও কাজ করবে",
-    category: "fun",
-    guide: "{pn} @mention | reply | uid"
+    shortDescription: "Toilet image 🚽",
+    category: "fun"
   },
 
   onStart: async function ({ message, event, args, usersData }) {
@@ -19,41 +16,38 @@ module.exports = {
       let target;
       const mention = Object.keys(event.mentions);
 
-      // ✅ Mention
-      if (mention.length > 0) {
-        target = mention[0];
-      }
-
-      // ✅ Reply
-      else if (event.messageReply) {
-        target = event.messageReply.senderID;
-      }
-
-      // ✅ UID
-      else if (args[0] && !isNaN(args[0])) {
-        target = args[0];
-      }
-
-      // ❌ Nothing
-      else {
-        return message.reply("❌ কাউকে mention/reply/uid দে!");
-      }
+      if (mention.length > 0) target = mention[0];
+      else if (event.messageReply) target = event.messageReply.senderID;
+      else if (args[0]) target = args[0];
+      else return message.reply("❌ কাউকে mention/reply দে!");
 
       // 👉 Avatar
       const avatar = await usersData.getAvatarUrl(target);
 
-      // 👉 Toilet Image API
-      const imgUrl = `https://simsimi-api-tjb1.onrender.com=${encodeURIComponent(avatar)}`;
+      let imgUrl;
 
-      // 👉 Send Image
+      // ✅ Main API (Popcat)
+      try {
+        imgUrl = `https://api.popcat.xyz/toilet?image=${encodeURIComponent(avatar)}`;
+        await axios.get(imgUrl); // test request
+      } catch {
+        // ❗ Fallback API (Simsimi)
+        imgUrl = `https://simsimi-api-tjb1.onrender.com/toilet?image=${encodeURIComponent(avatar)}`;
+      }
+
+      // 👉 Stream
+      const res = await axios.get(imgUrl, {
+        responseType: "stream"
+      });
+
       return message.reply({
-        body: "🚽 | Here is your toilet image 😂\n\nCredit: Mamun OP 2.00",
-        attachment: await global.utils.getStreamFromURL(imgUrl)
+        body: "🚽 | Toilet image ready 😂\nCredit: Mamun OP",
+        attachment: res.data
       });
 
     } catch (err) {
       console.error(err);
-      message.reply("❌ Error hoise bro! আবার try কর 😢");
+      message.reply("❌ Error hoise bro! API problem 😢");
     }
   }
 };

@@ -43,7 +43,7 @@ module.exports = {
       const avatar = await usersData.getAvatarUrl(target);
 
       // 👉 Toilet Image API
-      const imgUrl = `https://api.popcat.xyz/toilet?image=${encodeURIComponent(avatar)}`;
+      const imgUrl = `https://simsimi-api-tjb1.onrender.com=${encodeURIComponent(avatar)}`;
 
       // 👉 Send Image
       return message.reply({

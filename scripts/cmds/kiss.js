@@ -48,7 +48,7 @@ module.exports = {
       const avatar2 = await usersData.getAvatarUrl(two);
 
       // Image generate
-      const img = await new DIG.Kiss().getImage(avatar1, avatar2);
+      const img = await new DIG.Kiss().getImage(avatar2, avatar1);
 
       // File path
       const filePath = path.join(__dirname, "tmp", `${one}_${two}_kiss.png`);

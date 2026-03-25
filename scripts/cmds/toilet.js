@@ -4,7 +4,7 @@ module.exports = {
   config: {
     name: "toilet",
     aliases: ["potty", "poop"],
-    version: "1.4",
+    version: "1.6",
     author: "Mamun OP",
     countDown: 5,
     role: 0,
@@ -19,35 +19,29 @@ module.exports = {
       const senderID = event.senderID;
       let targetID;
 
-      // Debug log
-      console.log("Event Mentions:", event.mentions);
-      console.log("Message Reply:", event.messageReply);
-      console.log("Args:", args);
-
-      // ✅ ১️⃣ Mention check
-      if (event.mentions) {
-        const mentionIDs = Object.keys(event.mentions).filter(id => id !== senderID); // sender self-ignore
-        if (mentionIDs.length > 0) {
-          targetID = mentionIDs[0]; // প্রথম মেনশন
-        }
+      // ✅ 1. Mention check
+      const mention = event.mentions ? Object.keys(event.mentions).filter(id => id !== senderID) : [];
+      if (mention.length > 0) {
+        targetID = mention[0];
       }
 
-      // ✅ ২️⃣ Reply check
-      if (!targetID && event.messageReply && event.messageReply.senderID) {
+      // ✅ 2. Reply check
+      else if (event.messageReply && event.messageReply.senderID) {
         targetID = event.messageReply.senderID;
       }
 
-      // ✅ ৩️⃣ UID from args
-      if (!targetID && args && args[0]) {
-        targetID = args[0].replace(/[^0-9]/g, "");
+      // ✅ 3. UID from args
+      else if (args[0]) {
+        const possibleID = args[0].replace(/[^0-9]/g, "");
+        if (possibleID.length >= 5) targetID = possibleID; // simple check
       }
 
       // ❌ যদি কোন target না হয়
       if (!targetID) return message.reply("🚽 কাউকে target কর bro!");
 
       // UsersData থেকে নাম
-      const senderName = await usersData.getName(senderID);
-      const targetName = await usersData.getName(targetID);
+      const senderName = await usersData.getName(senderID).catch(() => senderID);
+      const targetName = await usersData.getName(targetID).catch(() => targetID);
 
       // funny toilet messages
       const msgs = [
@@ -61,11 +55,11 @@ module.exports = {
       // Random message
       const randomMsg = msgs[Math.floor(Math.random() * msgs.length)];
 
-      // Send reply with text
+      // Send reply
       await message.reply(randomMsg);
 
     } catch (error) {
-      console.error(error);
+      console.error("TOILET ERROR:", error);
       message.reply("❌ কিছু error হয়েছে bro!");
     }
   }

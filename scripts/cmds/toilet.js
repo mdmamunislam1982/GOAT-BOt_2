@@ -4,7 +4,7 @@ module.exports = {
   config: {
     name: "toilet",
     aliases: ["potty", "poop"],
-    version: "1.2",
+    version: "1.4",
     author: "Mamun OP",
     countDown: 5,
     role: 0,
@@ -24,23 +24,25 @@ module.exports = {
       console.log("Message Reply:", event.messageReply);
       console.log("Args:", args);
 
-      // ১️⃣ Mention
-      const mention = event.mentions ? Object.keys(event.mentions) : [];
-      if (mention.length > 0) {
-        targetID = mention[0];
-      }
-      // ২️⃣ Reply
-      else if (event.messageReply && event.messageReply.senderID) {
-        targetID = event.messageReply.senderID;
-      }
-      // ৩️⃣ UID
-      else if (args[0]) {
-        targetID = args[0].replace(/[^0-9]/g, "");
-      } 
-      else {
-        return message.reply("🚽 কাউকে target কর bro!");
+      // ✅ ১️⃣ Mention check
+      if (event.mentions) {
+        const mentionIDs = Object.keys(event.mentions).filter(id => id !== senderID); // sender self-ignore
+        if (mentionIDs.length > 0) {
+          targetID = mentionIDs[0]; // প্রথম মেনশন
+        }
       }
 
+      // ✅ ২️⃣ Reply check
+      if (!targetID && event.messageReply && event.messageReply.senderID) {
+        targetID = event.messageReply.senderID;
+      }
+
+      // ✅ ৩️⃣ UID from args
+      if (!targetID && args && args[0]) {
+        targetID = args[0].replace(/[^0-9]/g, "");
+      }
+
+      // ❌ যদি কোন target না হয়
       if (!targetID) return message.reply("🚽 কাউকে target কর bro!");
 
       // UsersData থেকে নাম

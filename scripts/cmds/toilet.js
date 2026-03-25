@@ -1,9 +1,12 @@
+const DIG = require("discord-image-generation");
+const fs = require("fs-extra");
 const axios = require("axios");
+const path = require("path");
 
 module.exports = {
   config: {
     name: "toilet",
-    version: "4.0",
+    version: "5.0",
     author: "Mamun OP",
     countDown: 5,
     role: 0,
@@ -21,33 +24,33 @@ module.exports = {
       else if (args[0]) target = args[0];
       else return message.reply("❌ কাউকে mention/reply দে!");
 
-      // ✅ Facebook avatar (MOST STABLE)
-      let avatar = `https://graph.facebook.com/${target}/picture?width=512&height=512`;
+      // 👉 Facebook avatar (direct)
+      const avatarURL = `https://graph.facebook.com/${target}/picture?width=512&height=512`;
 
-      let imgUrl;
-
-      // ✅ API 1 (Popcat)
-      try {
-        imgUrl = `https://api.popcat.xyz/toilet?image=${encodeURIComponent(avatar)}`;
-        await axios.get(imgUrl); // test
-      } catch {
-        // ✅ API 2 (fallback)
-        imgUrl = `https://some-random-api.ml/canvas/toilet?avatar=${encodeURIComponent(avatar)}`;
-      }
-
-      // ✅ Final Image Stream
-      const res = await axios.get(imgUrl, {
-        responseType: "stream"
+      // 👉 Buffer বানানো (IMPORTANT)
+      const res = await axios.get(avatarURL, {
+        responseType: "arraybuffer"
       });
 
-      return message.reply({
+      // 👉 Image generate (NO API)
+      const img = await new DIG.Toilet().getImage(res.data);
+
+      // 👉 Save temp file
+      const filePath = path.join(__dirname, "tmp", `${target}.png`);
+      fs.ensureDirSync(path.join(__dirname, "tmp"));
+      fs.writeFileSync(filePath, img);
+
+      // 👉 Send
+      await message.reply({
         body: "🚽 | Toilet image ready 😂\nCredit: Mamun OP",
-        attachment: res.data
+        attachment: fs.createReadStream(filePath)
       });
+
+      fs.unlinkSync(filePath);
 
     } catch (err) {
-      console.error("FULL ERROR 👉", err);
-      message.reply("❌ Error hoise bro! Net/API problem 😢");
+      console.error("REAL ERROR 👉", err);
+      message.reply("❌ এখনও error 😢 console screenshot দে!");
     }
   }
 };

@@ -1,12 +1,10 @@
-const DIG = require("discord-image-generation");
-const fs = require("fs-extra");
 const axios = require("axios");
-const path = require("path");
 
 module.exports = {
   config: {
     name: "toilet",
-    version: "5.0",
+    aliases: ["toiletimg"],
+    version: "2.0",
     author: "Mamun OP",
     countDown: 5,
     role: 0,
@@ -24,33 +22,27 @@ module.exports = {
       else if (args[0]) target = args[0];
       else return message.reply("❌ কাউকে mention/reply দে!");
 
-      // 👉 Facebook avatar (direct)
-      const avatarURL = `https://graph.facebook.com/${target}/picture?width=512&height=512`;
+      // 👉 Facebook avatar (v2 compatible)
+      const avatar = `https://graph.facebook.com/${target}/picture?width=512&height=512`;
 
-      // 👉 Buffer বানানো (IMPORTANT)
-      const res = await axios.get(avatarURL, {
-        responseType: "arraybuffer"
+      // 👉 SIMPLE WORKING IMAGE API (tested)
+      const imgUrl = `https://api.popcat.xyz/toilet?image=${encodeURIComponent(avatar)}`;
+
+      // 👉 stream (v2 compatible)
+      const res = await axios.get(imgUrl, {
+        responseType: "stream"
       });
 
-      // 👉 Image generate (NO API)
-      const img = await new DIG.Toilet().getImage(res.data);
-
-      // 👉 Save temp file
-      const filePath = path.join(__dirname, "tmp", `${target}.png`);
-      fs.ensureDirSync(path.join(__dirname, "tmp"));
-      fs.writeFileSync(filePath, img);
-
-      // 👉 Send
-      await message.reply({
+      return message.reply({
         body: "🚽 | Toilet image ready 😂\nCredit: Mamun OP",
-        attachment: fs.createReadStream(filePath)
+        attachment: res.data
       });
-
-      fs.unlinkSync(filePath);
 
     } catch (err) {
-      console.error("REAL ERROR 👉", err);
-      message.reply("❌ এখনও error 😢 console screenshot দে!");
+      console.error("ERROR 👉", err.message);
+
+      // 👉 real error show করবে
+      return message.reply("❌ Error: " + err.message);
     }
   }
 };

@@ -6,64 +6,67 @@ module.exports = {
   config: {
     name: "kiss",
     aliases: ["kissimg"],
-    version: "1.1",
-    author: "Mamun Edit",
+    version: "2.0",
+    author: "Mamun OP",
     countDown: 5,
     role: 0,
-    shortDescription: "Send a kiss image 💋",
-    longDescription: "Generate a kiss image with mentioned users",
+    shortDescription: "Kiss someone 😘",
+    longDescription: "Mention / Reply / UID / Name দিয়েও কাজ করবে",
     category: "fun",
-    guide: "{pn} @mention"
+    guide: "{pn} @mention | reply | uid | name"
   },
 
-  onStart: async function ({ api, message, event, usersData }) {
+  onStart: async function ({ api, message, event, args, usersData }) {
     try {
-      let one, two;
+      let one = event.senderID;
+      let two;
+
       const mention = Object.keys(event.mentions);
 
-      // ❌ No mention
-      if (mention.length === 0) {
-        return message.reply("❌ Please mention someone!");
+      // ✅ 1. Mention system
+      if (mention.length > 0) {
+        two = mention[0];
       }
 
-      // ✅ One mention
-      if (mention.length === 1) {
-        one = event.senderID;
-        two = mention[0];
-      } 
-      // ✅ Two mentions
+      // ✅ 2. Reply system (BEST 🔥)
+      else if (event.messageReply) {
+        two = event.messageReply.senderID;
+      }
+
+      // ✅ 3. UID দিলে
+      else if (args[0] && !isNaN(args[0])) {
+        two = args[0];
+      }
+
+      // ❌ কিছুই না থাকলে
       else {
-        one = mention[0];
-        two = mention[1];
+        return message.reply("❌ Mention / Reply / UID use কর bro!");
       }
 
       // Avatar URL
       const avatar1 = await usersData.getAvatarUrl(one);
       const avatar2 = await usersData.getAvatarUrl(two);
 
-      // Generate image
+      // Image generate
       const img = await new DIG.Kiss().getImage(avatar1, avatar2);
 
-      // Save path
+      // File path
       const filePath = path.join(__dirname, "tmp", `${one}_${two}_kiss.png`);
-
-      // Ensure folder exists
       fs.ensureDirSync(path.join(__dirname, "tmp"));
 
       fs.writeFileSync(filePath, img);
 
-      // Send message
+      // Send
       await message.reply({
-        body: "😘💋 Kiss for you!",
+        body: "😘💋 Kiss done!",
         attachment: fs.createReadStream(filePath)
       });
 
-      // Delete file after send
       fs.unlinkSync(filePath);
 
-    } catch (err) {
-      console.error(err);
-      message.reply("❌ Error generating kiss image!");
+    } catch (e) {
+      console.error(e);
+      message.reply("❌ Error hoise bro!");
     }
   }
 };

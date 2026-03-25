@@ -5,7 +5,7 @@ module.exports = {
   config: {
     name: "toilet",
     aliases: ["potty", "poop"],
-    version: "1.0",
+    version: "1.1",
     author: "Mamun OP",
     countDown: 5,
     role: 0,
@@ -17,31 +17,39 @@ module.exports = {
 
   onStart: async function ({ message, event, args, usersData }) {
     try {
-      let one = event.senderID;
+      const one = event.senderID;
       let two;
 
-      const mention = Object.keys(event.mentions);
+      // Debug log
+      console.log("Event Mentions:", event.mentions);
+      console.log("Message Reply:", event.messageReply);
+      console.log("Args:", args);
 
-      // mention
+      // ১. Mention
+      const mention = event.mentions ? Object.keys(event.mentions) : [];
       if (mention.length > 0) {
         two = mention[0];
       }
-      // reply
-      else if (event.messageReply) {
+      // ২. Reply
+      else if (event.messageReply && event.messageReply.senderID) {
         two = event.messageReply.senderID;
       }
-      // uid
-      else if (args[0] && !isNaN(args[0])) {
-        two = args[0];
-      }
+      // ৩. UID
+      else if (args[0]) {
+        two = args[0].replace(/[^0-9]/g, ""); // শুধু numeric
+      } 
       else {
-        return message.reply("🚽 কাউরে target কর bro!");
+        return message.reply("🚽 কাউকে target কর bro!");
       }
 
+      // দুইটা যদি empty হয়
+      if (!two) return message.reply("🚽 কাউকে target কর bro!");
+
+      // UsersData থেকে নাম
       const name1 = await usersData.getName(one);
       const name2 = await usersData.getName(two);
 
-      // random funny message
+      // funny messages
       const msgs = [
         `🚽 ${name1} ${name2} কে টয়লেটে পাঠাইছে 💩😂`,
         `💩 ${name2} এখন টয়লেটে busy 🤣`,
@@ -56,7 +64,7 @@ module.exports = {
 
     } catch (e) {
       console.error(e);
-      message.reply("❌ error hoise bro!");
+      message.reply("❌ কিছু error হয়েছে bro!");
     }
   }
 };

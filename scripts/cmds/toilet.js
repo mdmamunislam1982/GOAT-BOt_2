@@ -3,8 +3,7 @@ const axios = require("axios");
 module.exports = {
   config: {
     name: "toilet",
-    aliases: ["toiletimg"],
-    version: "2.0",
+    version: "2.1",
     author: "Mamun OP",
     countDown: 5,
     role: 0,
@@ -12,7 +11,7 @@ module.exports = {
     category: "fun"
   },
 
-  onStart: async function ({ message, event, args }) {
+  onStart: async function ({ message, event, args, usersData }) {
     try {
       let target;
       const mention = Object.keys(event.mentions);
@@ -22,27 +21,29 @@ module.exports = {
       else if (args[0]) target = args[0];
       else return message.reply("❌ কাউকে mention/reply দে!");
 
-      // 👉 Facebook avatar (v2 compatible)
-      const avatar = `https://graph.facebook.com/${target}/picture?width=512&height=512`;
+      // ✅ FIX: usersData avatar (best for v2)
+      let avatar = await usersData.getAvatarUrl(target);
 
-      // 👉 SIMPLE WORKING IMAGE API (tested)
-      const imgUrl = `https://api.popcat.xyz/toilet?image=${encodeURIComponent(avatar)}`;
+      // 👉 fallback avatar
+      if (!avatar || avatar.includes("undefined")) {
+        avatar = "https://i.imgur.com/4M34hi2.png";
+      }
 
-      // 👉 stream (v2 compatible)
-      const res = await axios.get(imgUrl, {
+      // 👉 API
+      const url = `https://api.popcat.xyz/toilet?image=${encodeURIComponent(avatar)}`;
+
+      const res = await axios.get(url, {
         responseType: "stream"
       });
 
       return message.reply({
-        body: "🚽 | Toilet image ready 😂\nCredit: Mamun OP",
+        body: "🚽 | Toilet ready 😂\nCredit: Mamun OP",
         attachment: res.data
       });
 
     } catch (err) {
-      console.error("ERROR 👉", err.message);
-
-      // 👉 real error show করবে
-      return message.reply("❌ Error: " + err.message);
+      console.error("REAL ERROR 👉", err.message);
+      message.reply("❌ Error: " + err.message);
     }
   }
 };

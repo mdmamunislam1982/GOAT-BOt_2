@@ -4,7 +4,7 @@ module.exports = {
   config: {
     name: "toilet",
     aliases: ["potty", "poop"],
-    version: "1.6",
+    version: "1.8",
     author: "Mamun OP",
     countDown: 5,
     role: 0,
@@ -14,36 +14,38 @@ module.exports = {
     guide: "{pn} @mention | reply | uid"
   },
 
-  onStart: async function ({ message, event, args, usersData }) {
+  onStart: async function({ message, event, args, usersData }) {
     try {
       const senderID = event.senderID;
       let targetID;
 
-      // ✅ 1. Mention check
-      const mention = event.mentions ? Object.keys(event.mentions).filter(id => id !== senderID) : [];
-      if (mention.length > 0) {
-        targetID = mention[0];
+      // ✅ 1️⃣ Mention (self-ignore)
+      if (event.mentions && Object.keys(event.mentions).length > 0) {
+        const mentionIDs = Object.keys(event.mentions).filter(id => id !== senderID);
+        if (mentionIDs.length > 0) targetID = mentionIDs[0];
       }
 
-      // ✅ 2. Reply check
-      else if (event.messageReply && event.messageReply.senderID) {
+      // ✅ 2️⃣ Reply
+      if (!targetID && event.messageReply && event.messageReply.senderID) {
         targetID = event.messageReply.senderID;
       }
 
-      // ✅ 3. UID from args
-      else if (args[0]) {
+      // ✅ 3️⃣ UID from args
+      if (!targetID && args && args[0]) {
         const possibleID = args[0].replace(/[^0-9]/g, "");
-        if (possibleID.length >= 5) targetID = possibleID; // simple check
+        if (possibleID.length >= 5) targetID = possibleID;
       }
 
-      // ❌ যদি কোন target না হয়
+      // ❌ No target
       if (!targetID) return message.reply("🚽 কাউকে target কর bro!");
 
-      // UsersData থেকে নাম
-      const senderName = await usersData.getName(senderID).catch(() => senderID);
-      const targetName = await usersData.getName(targetID).catch(() => targetID);
+      // ✅ Get names safely
+      let senderName = senderID;
+      let targetName = targetID;
+      try { senderName = await usersData.getName(senderID); } catch {}
+      try { targetName = await usersData.getName(targetID); } catch {}
 
-      // funny toilet messages
+      // 💩 Toilet messages
       const msgs = [
         `🚽 ${senderName} ${targetName} কে টয়লেটে পাঠাল 💩😂`,
         `💩 ${targetName} এখন টয়লেটে busy 🤣`,
@@ -52,7 +54,7 @@ module.exports = {
         `💀 ${targetName} আর বাঁচলো না... সরাসরি টয়লেট!`
       ];
 
-      // Random message
+      // Random selection
       const randomMsg = msgs[Math.floor(Math.random() * msgs.length)];
 
       // Send reply
